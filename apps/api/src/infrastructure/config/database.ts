@@ -1,10 +1,11 @@
 import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
 import type { Database } from "./database-types";
+import { env } from "./env";
 
 const postgresDialect = new PostgresDialect({
   pool: new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: env.DATABASE_URL,
   }),
 });
 
