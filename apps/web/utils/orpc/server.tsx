@@ -9,11 +9,24 @@ import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import type { AppRouter } from "@workspace/api";
 import { cache } from "react";
 import { makeQueryClient } from "./query-client";
+import { createClient as createSupabaseClient } from "@/utils/supabase/server";
 
 export const getQueryClient = cache(makeQueryClient);
 
 const link = new RPCLink({
   url: `${process.env.NEXT_PUBLIC_API_URL}/rpc`,
+  headers: async () => {
+    const supabase = await createSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    return session
+      ? {
+          authorization: `Bearer ${session.access_token}`,
+        }
+      : {};
+  },
 });
 
 const client = createORPCClient<RouterClient<AppRouter>>(link);

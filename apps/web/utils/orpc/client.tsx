@@ -8,9 +8,22 @@ import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider, isServer } from "@tanstack/react-query";
 import type { AppRouter } from "@workspace/api";
 import { makeQueryClient } from "./query-client";
+import { createClient as createSupabaseClient } from "@/utils/supabase/client";
 
 const link = new RPCLink({
   url: `${process.env.NEXT_PUBLIC_API_URL}/rpc`,
+  headers: async () => {
+    const supabase = createSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    return session
+      ? {
+        authorization: `Bearer ${session.access_token}`,
+      }
+      : {};
+  },
 });
 
 const client = createORPCClient<RouterClient<AppRouter>>(link);

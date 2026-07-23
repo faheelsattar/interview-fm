@@ -4,13 +4,13 @@ import { Button } from "@workspace/ui/components/button";
 import Link from "next/link";
 
 interface CoursePageProps {
-  params: {
+  params: Promise<{
     courseId: string;
-  };
+  }>;
 }
 
-export default function CoursePage({ params }: CoursePageProps) {
-  const { courseId } = params;
+export default async function CoursePage({ params }: CoursePageProps) {
+  const { courseId } = await params;
 
   return (
     <div className="flex-1 w-full max-w-4xl mx-auto p-6">
